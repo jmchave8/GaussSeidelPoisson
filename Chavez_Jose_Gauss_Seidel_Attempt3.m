@@ -1,54 +1,52 @@
-%%%%%% Code Method 1 %%%%%%%% 
+%Matlab Code to solve Poisson's equation with Gauss Seidel Method with the following conditions in the problem statement. 
 % Jose Chavez  1161146 
 clear all; clc; 
 tic 
-%% Parameters 
+%% Given Conditions 
 ax = -pi; 
 ay = -pi; 
 bx = pi; 
 by = pi; 
-% Define the number of points on the interior (this does not include the 
-% exterior boundary points) 
-N=input('Value of X Intenal Nodes='); 
+N=input('Value of X Intenal Nodes='); % Number of points on the internal nodes for N and M%
 M=input('Value of Y Internal Nodes='); 
-Me=M+2; 
+Me=M+2; %Number of points including exterior boundary points for Ne and Me%
 Ne=N+2; 
 % this generates the x and y values that will be used to calculate 
-xvalues = linspace(-pi,pi,Ne); 
-yvalues = linspace(-pi,pi,Me); 
+x = linspace(-pi,pi,Ne); 
+y = linspace(-pi,pi,Me); 
 %% 
-%U matrix (guess) 
-U = ones(Ne,Me); 
-%solving for right hand side with F equation 
-for i=1:length(xvalues); 
-    for j=1:length(yvalues); 
-F(i,j) = cos ( (0.5*pi)* (2*((xvalues(i)-ax) / (bx - ax))+1 )).*sin( pi*((yvalues(j)-ay) / (by -ay))); 
+
+U = ones(Ne,Me); %U initial guess %
+
+% For loop solving for right hand side with F equation with i,j indices% 
+for i=1:length(x); 
+    for j=1:length(y); 
+F(i,j) = cos ( (0.5*pi)* (2*((x(i)-ax) / (bx - ax))+1 )).*sin( pi*((y(j)-ay) / (by -ay))); 
     end 
 end 
 
 %% Boundary Conditions for "top" and "bottom" 
 
 % Bottom boundary values 
-phi_ab = ((xvalues - ax).^2 ) .* sin( (pi *(xvalues - ax)) / (2*(bx-ax)) ) ; 
+phi = ((x - ax).^2 ) .* sin( (pi *(x- ax)) / (2*(bx-ax)) ) ; 
 
 % Top boundary values 
-psy_ab = cos (pi*(xvalues-ax)).*cosh(bx-xvalues); 
+psy = cos (pi*(x-ax)).*cosh(bx-x); 
 
 % place these known values in the solution grid 
-U(:,1) = phi_ab; 
-U(:,Me) = psy_ab; 
+U(:,1) = phi; 
+U(:,Me) = psy; 
 %% Left and Right Boundary points 
-%   Using the given neumann condition yields special cases of the 
-%   gauss-siedel iteration that can be used along entire "side" boundaries. 
-%   F is already assumed to have been generated as well as U solution grid 
-% Parameters that are used in the iterations. 
+%   Using the given neumann condition yields special cases of the Gauss-siedel iteration that can be used along entire "side" boundaries. 
+%   F and U is computed in solution grid 
+% Multipliers that are used in the iterations. 
 DX = 2*pi/(N+1); 
 B = 1/DX.^2 
 DY = 2*pi/(M+1); 
 C = 1/DY.^2 
 DEN = -2*(B+C) 
 
-% normalize elements 
+% Normalize Multipliers%
 B = B/DEN; 
 C = C/DEN; 
 F = F/DEN; 
@@ -68,7 +66,8 @@ for j = 2:M+1;
     % Right Boundary 
     U(N,j) = DEN*(  F(N,j) - (2*B)*U(N-1,j) - C*U(N,j-1) - C*U(N,j+1) ); 
 end 
-%% Main Sweep of Gauss-Siedel 
+
+%% Gauss-Siedel iterating the general U equation%
 
 for i = 2:N+1; 
     for j = 2:M+1; 
