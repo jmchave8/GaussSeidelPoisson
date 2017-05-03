@@ -41,10 +41,10 @@ U(:,Me) = psy;
 %   F and U is computed in solution grid 
 % Multipliers that are used in the iterations. 
 DX = 2*pi/(N+1); 
-B = 1/DX.^2 
+B = 1/DX.^2;
 DY = 2*pi/(M+1); 
-C = 1/DY.^2 
-DEN = -2*(B+C) 
+C = 1/DY.^2;
+DEN = -2*(B+C); 
 
 % Normalize Multipliers%
 B = B/DEN; 
@@ -52,9 +52,9 @@ C = C/DEN;
 F = F/DEN; 
 DEN = 1; 
 error=10; 
-error_iterations=0 
+error_iterations=0;
 % check for diagonal dominance of elements 
-abs(DEN) >= abs(2*B+2*C) 
+abs(DEN) >= abs(2*B+2*C)
 while error>10^-10; 
     W=U; 
 for P = 1:1000; 
@@ -76,9 +76,10 @@ for i = 2:N+1;
 end 
 end 
 error=abs(max(max(((W-U)./W)))); 
-error_iterations=error_iterations+1 
+error_iterations=error_iterations+1;
 end 
 toc 
+error_iterations
 figure 
 subplot(1,2,1),surf(U),xlabel('y axis'),ylabel('x axis');
-subplot(1,2,2),contour(U),xlabel('y axis'),ylabel('x axis')
+subplot(1,2,2),contour(U),xlabel('y axis'),ylabel('x axis');
