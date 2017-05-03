@@ -1,7 +1,7 @@
 %Matlab Code to solve Poisson's equation with Gauss Seidel Method with the following conditions in the problem statement. 
 % Jose Chavez  1161146 
 clear all; clc; 
-tic 
+
 %% Given Conditions 
 ax = -pi; 
 ay = -pi; 
@@ -9,6 +9,7 @@ bx = pi;
 by = pi; 
 N=input('Value of X Intenal Nodes='); % Number of points on the internal nodes for N and M%
 M=input('Value of Y Internal Nodes='); 
+tic
 Me=M+2; %Number of points including exterior boundary points for Ne and Me%
 Ne=N+2; 
 % this generates the x and y values that will be used to calculate 
