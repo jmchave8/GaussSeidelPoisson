@@ -35,6 +35,7 @@ phi = ((x - ax).^2 ) .* sin( (pi *(x- ax)) / (2*(bx-ax)) ) ;
 psy = cos (pi*(x-ax)).*cosh(bx-x); 
 
 % place these known values in the solution grid 
+
 U(1,:) = phi; 
 U(N+2,:) = psy; 
 %% Left and Right Boundary points 
