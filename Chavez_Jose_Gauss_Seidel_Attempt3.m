@@ -35,46 +35,45 @@ phi = ((x - ax).^2 ) .* sin( (pi *(x- ax)) / (2*(bx-ax)) ) ;
 psy = cos (pi*(x-ax)).*cosh(bx-x); 
 
 % place these known values in the solution grid 
-U(:,1) = phi; 
-U(:,Me) = psy; 
+U(1,:) = phi; 
+U(N+2,:) = psy; 
 %% Left and Right Boundary points 
 %   Using the given neumann condition yields special cases of the Gauss-siedel iteration that can be used along entire "side" boundaries. 
 %   F and U is computed in solution grid 
 % Multipliers that are used in the iterations. 
-DX = 2*pi/(N+1); 
-B = 1/DX.^2;
-DY = 2*pi/(M+1); 
-C = 1/DY.^2;
-DEN = -2*(B+C); 
+dx = 2*pi/(N+1); 
+B = 1/dx.^2;
+dy = 2*pi/(M+1); 
+C = 1/dy.^2;
+den= -2*(B+C); 
 
 % Normalize Multipliers%
-B = B/DEN; 
-C = C/DEN; 
-F = F/DEN; 
-DEN = 1; 
+B = B/den; 
+C = C/den; 
+F = F/den; 
+den = 1; 
 error=10; 
 error_iterations=0;
 % check for diagonal dominance of elements 
-abs(DEN) >= abs(2*B+2*C)
+abs(den) >= abs(2*B+2*C)
 while error>10^-10; 
     W=U; 
-for P = 1:1000; 
 
-for j = 2:M+1; 
+for i = 2:N+1; 
      
     % Left boundary 
-    U(1,j) = DEN*(  F(1,j) - (2*B)*U(2,j) - C*U(1,j-1) - C*U(1,j+1) ); 
+    U(i,1) = den*(  F(i,1) - (2*B)*U(i,2) - C*U(i-1,1) - C*U(i+1,1) );
+    
     % Right Boundary 
-    U(N,j) = DEN*(  F(N,j) - (2*B)*U(N-1,j) - C*U(N,j-1) - C*U(N,j+1) ); 
+    U(i,N+2) = den*(  F(i,N+2) - (2*B)*U(i,N+1) - C*U(i-1,N+2) - C*U(i+1,N+2) ); 
 end 
 
 %% Gauss-Siedel iterating the general U equation%
 
 for i = 2:N+1; 
     for j = 2:M+1; 
-        U(i,j) = DEN*(  F(i,j) - C*U(i+1,j) - C*U(i-1,j)- B*U(i,j+1) - B*U(i,j-1) ); 
+        U(i,j) = den*(  F(i,j) - C*U(i+1,j) - C*U(i-1,j)- B*U(i,j+1) - B*U(i,j-1) ); 
     end 
-end 
 end 
 error=abs(max(max(((W-U)./W)))); 
 error_iterations=error_iterations+1;
@@ -82,5 +81,6 @@ end
 toc 
 error_iterations
 figure 
-subplot(1,2,1),surf(U),xlabel('y axis'),ylabel('x axis');
-subplot(1,2,2),contour(U),xlabel('y axis'),ylabel('x axis');
+subplot(1,2,1),surf(U),xlabel('x axis'),ylabel('y axis'),title('F=cos(x)sin(y)');
+
+subplot(1,2,2),contour(U),xlabel('x axis'),ylabel('y axis'),title('F=cos(x)sin(y)');
