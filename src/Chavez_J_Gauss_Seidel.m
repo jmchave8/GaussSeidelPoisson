@@ -7,16 +7,17 @@ ax = -pi;
 ay = -pi; 
 bx = pi; 
 by = pi; 
+
 N=input('Value of X Intenal Nodes='); % Number of points on the internal nodes for N and M%
 M=input('Value of Y Internal Nodes='); 
-tic
+Time=tic; %Count Begins %
 Me=M+2; %Number of points including exterior boundary points for Ne and Me%
 Ne=N+2; 
-
 % this generates the x and y values that will be used to calculate 
 x = linspace(-pi,pi,Ne); 
 y = linspace(-pi,pi,Me); 
 %% 
+
 U = ones(Ne,Me); %U initial guess %
 
 % For loop solving for right hand side with F equation with i,j indices% 
@@ -35,12 +36,12 @@ phi = ((x - ax).^2 ) .* sin( (pi *(x- ax)) / (2*(bx-ax)) ) ;
 psy = cos (pi*(x-ax)).*cosh(bx-x); 
 
 % place these known values in the solution grid 
-
 U(1,:) = phi; 
+
 U(N+2,:) = psy; 
 %% Left and Right Boundary points 
-%   Using the given neumann condition yields special cases of the Gauss-siedel iteration that can be used along entire "side" boundaries. 
-%   F and U is computed in solution grid 
+% Using the given neumann condition yields special cases of the Gauss-siedel iteration that can be used along entire "side" boundaries. 
+% F and U is computed in solution grid 
 % Multipliers that are used in the iterations. 
 dx = 2*pi/(N+1); 
 B = 1/dx.^2;
@@ -55,20 +56,26 @@ F = F/den;
 den = 1; 
 error=10; 
 error_iterations=0;
-save('Variables.mat');
-load('Variables.mat');
 % check for diagonal dominance of elements 
 abs(den) >= abs(2*B+2*C)
+Time_Count=0;
+save('variables.mat')
+%%
+load('variables.mat')
 while error>10^-10; 
+    T_loop=tic;
+    if Time_Count >=.5
+        Time_Count=0;
+        save ('variables.mat')
+    end
     W=U; 
-
 for i = 2:N+1; 
-     
     % Left boundary 
     U(i,1) = den*(  F(i,1) - (2*B)*U(i,2) - C*U(i-1,1) - C*U(i+1,1) );
-    
+  
     % Right Boundary 
     U(i,N+2) = den*(  F(i,N+2) - (2*B)*U(i,N+1) - C*U(i-1,N+2) - C*U(i+1,N+2) ); 
+  
 end 
 
 %% Gauss-Siedel iterating the general U equation%
@@ -80,11 +87,15 @@ for i = 2:N+1;
 end 
 error=abs(max(max(((W-U)./W)))); 
 error_iterations=error_iterations+1;
+P= toc(T_loop);
+Time_Count=Time_Count + P;
 end 
-toc 
-error_iterations
 
-% this is the U value don't want changing%
+toc(Time)
+save('variables.mat')
+%%
+load('variables.mat')
+error_iterations
 grid_con=mean(mean(U.^2))
 figure 
 subplot(1,2,1),surf(U),xlabel('x axis'),ylabel('y axis'),title('F=cos(x)sin(y)');
