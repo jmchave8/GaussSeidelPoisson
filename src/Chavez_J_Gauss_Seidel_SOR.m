@@ -10,7 +10,7 @@ by = pi;
 lamda=input('Value of lamda=');
 N=input('Value of X Intenal Nodes='); % Number of points on the internal nodes for N and M%
 M=input('Value of Y Internal Nodes='); 
-tic
+Time=tic; %Count Begins %
 Me=M+2; %Number of points including exterior boundary points for Ne and Me%
 Ne=N+2; 
 % this generates the x and y values that will be used to calculate 
@@ -60,7 +60,16 @@ error=10;
 error_iterations=0;
 % check for diagonal dominance of elements 
 abs(den) >= abs(2*B+2*C)
+Time_Count=0;
+save('variables.mat')
+%%
+load('variables.mat')
 while error>10^-10; 
+    T_loop=tic;
+    if Time_Count >=.5
+        Time_Count=0;
+        save ('variables.mat')
+    end
     W=U; 
 for i = 2:N+1; 
      
@@ -87,8 +96,14 @@ for i = 2:N+1;
 end 
 error=abs(max(max(((W-U)./W)))); 
 error_iterations=error_iterations+1;
+P= toc(T_loop);
+Time_Count=Time_Count + P;
 end 
-toc 
+
+toc(Time)
+save('variables.mat')
+%%
+load('variables.mat')
 error_iterations
 grid_con=mean(mean(U.^2))
 figure 
